@@ -1,15 +1,19 @@
-// import { useState } from 'react'
-
-import { Setting } from "./component/setting"
+import { useState } from 'react'
+import { Setting } from "./component/Setting" 
 
 
 function App() {
-  // const [count, setCount] = useState(0)
+  const [visible, setVisible] = useState(true)
 
+  const test = () => {
+    setVisible( false )
+    console.log("click happend")
+  }
+ 
   return (
     <>
-      <section  className='bg-green-200 min-w-screen min-h-screen px-9 py-5'>
-          <Setting />
+      <section  className='bg-gray-900 min-w-screen min-h-screen px-9 py-5' onClick={() => test()} >
+          <Setting  visiblity={visible} />
       </section>
 
     </>

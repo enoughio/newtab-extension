@@ -2,9 +2,13 @@ import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { SettingOptions } from './SettingOptions';
 
+type SettingProps = {
+    visiblity: boolean;
+};
 
-export const Setting = () => {
-    const [ visible, setVisible ] =  useState<Boolean >(false);
+export const Setting = (prop: SettingProps) => {
+    let visiblity = prop.visiblity
+    const [ visible, setVisible ] =  useState<Boolean >(visiblity || false);
     const settingHandler = () => {
         setVisible( (prev) => !prev )
     }
