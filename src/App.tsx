@@ -5,17 +5,27 @@ import { Setting } from "./component/Setting"
 function App() {
   const [visible, setVisible] = useState(true)
 
-  const test = () => {
-    setVisible( false )
-    console.log("click happend")
+  // const test = () => {  // event bublling will wake this function-
+  //   console.log("test called")
+  //   if (visible == true) {
+  //    setVisible( false )
+  //   }
+  // }
+  
+  function updateVisiblity() { 
+    
+    console.log("updated visiblity")
+    setVisible( prev => ! prev )
+  
   }
  
   return (
     <>
-      <section  className='bg-gray-900 min-w-screen min-h-screen px-9 py-5' onClick={() => test()} >
-          <Setting  visiblity={visible} />
+      <section  className='bg-green-900 text-white min-w-screen min-h-screen px-9 py-5'  >
+      
+          <Setting  visiblity={visible} action={updateVisiblity} />
+      
       </section>
-
     </>
   )
 }

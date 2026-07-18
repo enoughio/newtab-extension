@@ -1,24 +1,25 @@
 import { Settings } from 'lucide-react';
-import { useState } from 'react';
 import { SettingOptions } from './SettingOptions';
 
 type SettingProps = {
     visiblity: boolean;
+    action : () => void
 };
 
-export const Setting = (prop: SettingProps) => {
-    let visiblity = prop.visiblity
-    const [ visible, setVisible ] =  useState<Boolean >(visiblity || false);
-    const settingHandler = () => {
-        setVisible( (prev) => !prev )
-    }
+export const Setting = ({ visiblity, action } : SettingProps) => {
 
+    // let visiblity = prop.visiblity
+    // const [ visible, setVisible ] =  useState<Boolean >(visiblity || false);
+
+    // onClick={ settingHandler }
+    
     return (
         <>
-        <button className='bg-red-600'  onClick={ settingHandler }   >       
+        <button className='bg-red-600'  onClick={ () => action() }   >       
                 <Settings />
         </button>
-        {   visible && <SettingOptions /> } 
+
+        { visiblity == true && <SettingOptions /> } 
         </>
     )
 
