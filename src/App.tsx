@@ -18,12 +18,16 @@ function App() {
     setVisible( prev => ! prev )
   
   }
+
+  function onClose() {
+    setVisible(false)
+  }
  
   return (
     <>
       <section  className='bg-green-900 text-white min-w-screen min-h-screen px-9 py-5'  >
       
-          <Setting  visiblity={visible} action={updateVisiblity} />
+          <Setting  visiblity={visible} onToggle={updateVisiblity} onClose={onClose} />
       
       </section>
     </>

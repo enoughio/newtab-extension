@@ -1,26 +1,49 @@
 import { Settings } from 'lucide-react';
 import { SettingOptions } from './SettingOptions';
 
+import { useEffect, useRef } from 'react';
+
+
 type SettingProps = {
     visiblity: boolean;
-    action : () => void
+    onToggle : () => void
+    onClose : () => void
 };
 
-export const Setting = ({ visiblity, action } : SettingProps) => {
+export const Setting = ({ visiblity, onToggle, onClose } : SettingProps) => {
 
-    // let visiblity = prop.visiblity
-    // const [ visible, setVisible ] =  useState<Boolean >(visiblity || false);
+    const menuRef = useRef<HTMLDivElement | null >(null) 
 
-    // onClick={ settingHandler }
+    useEffect(
+
+        () => {
+            function handleClick( event : MouseEvent ){
+
+                if( menuRef.current && ! menuRef.current.contains( event.target as Node ) ){
+                    onClose()
+                    console.log("clicked outside")
+                }
+            }
+
+             document.addEventListener("mousedown", handleClick);
+
+            return () => {
+                document.removeEventListener("mousedown", handleClick) };
+
+        }, [])
+
+
     
     return (
-        <>
-        <button className='bg-red-600'  onClick={ () => action() }   >       
-                <Settings />
-        </button>
+        <div ref={menuRef} >
 
-        { visiblity == true && <SettingOptions /> } 
-        </>
+            <button className='bg-red-600'  onClick={ () => onToggle() }   >       
+                    <Settings />
+            </button>
+
+            { visiblity == true && <SettingOptions   /> } 
+        
+        </div>
     )
 
 }
