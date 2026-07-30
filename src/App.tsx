@@ -2,6 +2,12 @@ import { useState } from 'react'
 import { Setting } from "./component/Setting" 
 
 
+const shortcusts = [
+  { name : "Gooogle", url : "https://www.google.com/"  },
+  { name : "You Tube", url : "https://www.YOUTUBE.com/"  }
+]
+
+
 function App() {
   const [visible, setVisible] = useState(true)
 
@@ -12,11 +18,9 @@ function App() {
   //   }
   // }
   
-  function updateVisiblity() { 
-    
+  function updateVisiblity() {     
     console.log("updated visiblity")
     setVisible( prev => ! prev )
-  
   }
 
   function onClose() {
