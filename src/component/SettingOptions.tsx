@@ -4,7 +4,6 @@ import { Component, FolderOpenDot, Image, Layers, LayoutDashboard, Plus, Wallpap
 export const SettingOptions = () => {
 
 
-
     return (
         <>
             <ul className="border rounded-lg py-3 px-2 ml-5 w-fit flex  flex-col gap-1" >

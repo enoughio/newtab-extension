@@ -1,41 +1,36 @@
-import { useState } from 'react'
-import { Setting } from "./component/Setting" 
+import { useState } from "react";
+import Desktop from "./Desktop";
 
 
-const shortcusts = [
-  { name : "Gooogle", url : "https://www.google.com/"  },
-  { name : "You Tube", url : "https://www.YOUTUBE.com/"  }
-]
 
+type Shortcusts = Array<{ id:number, name: string; url: string; }>;
+
+
+const shortcusts: Shortcusts = [
+  { id:1, name: "Gooogle", url: "https://www.google.com/",},
+];
 
 function App() {
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(true);
 
-  // const test = () => {  // event bublling will wake this function-
-  //   console.log("test called")
-  //   if (visible == true) {
-  //    setVisible( false )
-  //   }
-  // }
-  
-  function updateVisiblity() {     
-    console.log("updated visiblity")
-    setVisible( prev => ! prev )
+  function updateVisiblity() {
+    console.log("updated visiblity");
+    setVisible((prev) => !prev);
   }
 
   function onClose() {
-    setVisible(false)
+    setVisible(false);
   }
- 
+
   return (
     <>
-      <section  className='bg-green-900 text-white min-w-screen min-h-screen px-9 py-5'  >
-      
-          <Setting  visiblity={visible} onToggle={updateVisiblity} onClose={onClose} />
-      
-      </section>
+
+      < Desktop visible={visible} updateVisiblity={updateVisiblity}  onClose={onClose} />
+
+
+
     </>
-  )
+  );
 }
 
-export default App
+export default App;

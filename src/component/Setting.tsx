@@ -19,32 +19,41 @@ export const Setting = ({ visiblity, onToggle, onClose }: SettingProps) => {
     }
   }
 
-  
   useEffect(() => {
     document.addEventListener("mousedown", handleClick); // this will pass handleClick(e) where e will refer to the evement
-    // on which the click happened  
+    // on which the click happened
 
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-
   }, []);
-
-
 
   return (
     <>
-    <div ref={menuRef}>
-      <button className="" onClick={() => onToggle()}>
-        <Settings />
-      </button>
 
-      {visiblity == true && <SettingOptions />}
+      {/* menu only  */}
+      <div ref={menuRef} className=" ">
+        {/* setting button */}
+        <div className="">
+          <button className="" onClick={() => onToggle()}>
+            <Settings />
+          </button>
 
-    </div>
-    
+          <div className="alig">{visiblity == true && <SettingOptions />}</div>
+        </div>
 
-    
+      </div>
+
+      
+
+
+
+
+
+
+
+
+
     </>
   );
 };
