@@ -1,22 +1,39 @@
 import { Setting } from "./component/Setting";
-
+import AddShortcutDialog from "./component/AddShortcut";
 
 type DesktopArgs = {
-    visible :  boolean;
-    updateVisiblity : () => void;
-    onClose : () => void
-}
+  isDialogOpen : boolean;
+  openDialogState : () => void;
+  closeDialog : () => void;
 
-const Desktop  = ({visible , updateVisiblity , onClose} : DesktopArgs) => {
+  visible : boolean;
+  updateVisibility : () => void;
+  onClose : () => void;
+};
+
+const Desktop = ({
+  visible,
+  updateVisibility,
+  onClose,
+  isDialogOpen,
+  openDialogState,
+  closeDialog,
+}: DesktopArgs) => {
   return (
-    <section className="bg-green-900 text-white min-w-screen min-h-screen px-5 py-5">
+    <section className="bg-green-900 text-white min-w-screen min-h-screen px-5 py-5 flex">
       <Setting
-        visiblity={visible}
-        onToggle={updateVisiblity}
+        visibility={visible}
+        onToggle={updateVisibility}
         onClose={onClose}
+        openDialogState={openDialogState}
       />
 
-      {/* <AddShortcut /> */}
+      <div className="absolute top-[30%] left-[37%]">
+        <AddShortcutDialog
+          isDialogOpen={isDialogOpen}
+          closeDialog={closeDialog}
+        />
+      </div>
     </section>
   );
 };

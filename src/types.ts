@@ -1,0 +1,1 @@
+export type closeDialog = (formData: { name: string; url: string }) => void;

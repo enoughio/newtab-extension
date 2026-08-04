@@ -1,20 +1,35 @@
 import { useState } from "react";
 import Desktop from "./Desktop";
+import type { closeDialog } from "./types";
 
-
-
-type Shortcusts = Array<{ id:number, name: string; url: string; }>;
-
+type Shortcusts = Array<{ id: number; name: string; url: string }>;
 
 const shortcusts: Shortcusts = [
-  { id:1, name: "Gooogle", url: "https://www.google.com/",},
+  { id: 1, name: "Gooogle", url: "https://www.google.com/" },
 ];
 
 function App() {
+  // setting options
   const [visible, setVisible] = useState(true);
+  
+  //dialog
+  const [isDialogOpen, setDialogState] = useState(false);
+  
+  // shortcut(icons)
+  const [shortcuts, setShortcuts] = useState<Shortcusts>([...shortcusts]);
 
-  function updateVisiblity() {
-    console.log("updated visiblity");
+
+  function openDialogState() {
+    setDialogState(true);
+  }
+
+  function closeDialog(formData )  : closeDialog {
+    setDialogState(false);
+    setShortcuts([...shortcusts, { id : shortcusts.length + 1,  name : formData.name, url :  formData.url}])
+  }
+
+  function updateVisibility() {
+    console.log("updated visibility");
     setVisible((prev) => !prev);
   }
 
@@ -24,11 +39,14 @@ function App() {
 
   return (
     <>
-
-      < Desktop visible={visible} updateVisiblity={updateVisiblity}  onClose={onClose} />
-
-
-
+      <Desktop
+        isDialogOpen={isDialogOpen}
+        openDialogState={openDialogState}
+        closeDialog={closeDialog}
+        visible={visible}
+        updateVisibility={updateVisibility}
+        onClose={onClose}
+      />
     </>
   );
 }

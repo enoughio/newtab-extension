@@ -4,12 +4,15 @@ import { SettingOptions } from "./SettingOptions";
 import { useEffect, useRef } from "react";
 
 type SettingProps = {
-  visiblity: boolean;
+  visibility: boolean;
   onToggle: () => void;
-  onClose: () => void;
+  onClose: () => void 
+  
+  openDialogState: () => void 
+
 };
 
-export const Setting = ({ visiblity, onToggle, onClose }: SettingProps) => {
+export const Setting = ({ visibility, onToggle, onClose, openDialogState }: SettingProps) => {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   function handleClick(event: MouseEvent) {
@@ -28,6 +31,7 @@ export const Setting = ({ visiblity, onToggle, onClose }: SettingProps) => {
     };
   }, []);
 
+
   return (
     <>
 
@@ -39,7 +43,7 @@ export const Setting = ({ visiblity, onToggle, onClose }: SettingProps) => {
             <Settings />
           </button>
 
-          <div className="alig">{visiblity == true && <SettingOptions />}</div>
+          <div className="alig">{visibility == true && <SettingOptions onSelect={onClose} openDialogState={openDialogState} />}</div>
         </div>
 
       </div>
