@@ -1,10 +1,11 @@
 import { Setting } from "./component/Setting";
 import AddShortcutDialog from "./component/AddShortcut";
+import type { createShortcut } from "./types";
 
 type DesktopArgs = {
   isDialogOpen : boolean;
   openDialogState : () => void;
-  closeDialog : () => void;
+  createShortcut : createShortcut
 
   visible : boolean;
   updateVisibility : () => void;
@@ -17,7 +18,7 @@ const Desktop = ({
   onClose,
   isDialogOpen,
   openDialogState,
-  closeDialog,
+  createShortcut,
 }: DesktopArgs) => {
   return (
     <section className="bg-green-900 text-white min-w-screen min-h-screen px-5 py-5 flex">
@@ -31,7 +32,7 @@ const Desktop = ({
       <div className="absolute top-[30%] left-[37%]">
         <AddShortcutDialog
           isDialogOpen={isDialogOpen}
-          closeDialog={closeDialog}
+          createShortcut={createShortcut}
         />
       </div>
     </section>

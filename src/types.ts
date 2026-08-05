@@ -1,1 +1,1 @@
-export type closeDialog = (formData: { name: string; url: string }) => void;
+export type createShortcut = (formData: { name: string; url: string }) => void

@@ -1,12 +1,13 @@
 import { useState } from "react";
+import type { createShortcut } from "../types";
 
 // add shourtcut button
 const AddShortcutDialog = ({
   isDialogOpen,
-  closeDialog,
+  createShortcut,
 }: {
   isDialogOpen: boolean;
-  closeDialog: () => void;
+  createShortcut: createShortcut
 }) => {
   // const [ isDialogOpen, setDialogState ]  =  useState<Boolean>(false)
   const [formData, setFormData] = useState<{ name: string; url: string }>({
@@ -16,18 +17,17 @@ const AddShortcutDialog = ({
 
 
   const handelChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-
     const { name, value } = e.target
-    setFormData( { ...formData, [name] : value } )
-
+    setFormData( (prev) => ( 
+      {...prev, [name] : value }
+    ))
   }
 
 
-  const handelSubmit = (e: any) => {
+  const handelSubmit = (e: React.SubmitEvent<HTMLFormElement> ) => {
     e.preventDefault(); 
-    closeDialog(formData)
-    console.log("shortcut added");
-    console.log(formData)
+    createShortcut(formData)  // TO SEND FORM DATA TO APP COMPONENT
+    setFormData({name: "", url : ""})
   };
 
   return (

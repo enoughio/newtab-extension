@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Desktop from "./Desktop";
-import type { closeDialog } from "./types";
+import type { createShortcut } from "./types";
 
 type Shortcusts = Array<{ id: number; name: string; url: string }>;
 
@@ -23,11 +23,15 @@ function App() {
     setDialogState(true);
   }
 
-  function closeDialog(formData )  : closeDialog {
-    setDialogState(false);
-    setShortcuts([...shortcusts, { id : shortcusts.length + 1,  name : formData.name, url :  formData.url}])
-  }
 
+  function createShortcut( {name, url} : { name :  string; url : string } ){
+    setShortcuts( (prev) => ( [
+      ...prev, { id : shortcuts.length + 1,  name : name, url :  url}
+      ]) )
+    console.log("shortcut added", shortcuts)
+    setDialogState(false);
+  }
+  
   function updateVisibility() {
     console.log("updated visibility");
     setVisible((prev) => !prev);
@@ -42,7 +46,7 @@ function App() {
       <Desktop
         isDialogOpen={isDialogOpen}
         openDialogState={openDialogState}
-        closeDialog={closeDialog}
+        createShortcut={createShortcut}
         visible={visible}
         updateVisibility={updateVisibility}
         onClose={onClose}
