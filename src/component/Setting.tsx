@@ -36,7 +36,7 @@ export const Setting = ({ visibility, onToggle, onClose, openDialogState }: Sett
     <>
 
       {/* menu only  */}
-      <div ref={menuRef} className=" ">
+      <div ref={menuRef} className="absolute top-5 left-5 text-white">
         {/* setting button */}
         <div className="">
           <button className="" onClick={() => onToggle()}>
