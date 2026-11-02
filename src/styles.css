@@ -254,16 +254,30 @@ body.drawer-open .hint {
 
 .grip {
   position: absolute;
-  top: 3px;
+  top: 0;
   left: 50%;
-  width: 22px;
-  height: 3px;
-  margin-left: -11px;
-  border-radius: 99px;
-  background: color-mix(in srgb, var(--fg) 38%, transparent);
+  width: 36px;
+  height: 16px;
+  margin-left: -18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   z-index: 4;
+  opacity: 0;
   cursor: grab;
 }
+
+.grip::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 3px;
+  margin: 4px auto 0;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.tile-widget:hover > .grip { opacity: 1; }
 
 body.is-dragging, body.is-dragging * { user-select: none; }
 body.is-dragging .grip { cursor: grabbing; }
@@ -1084,8 +1098,19 @@ input[type="range"] {
 }
 
 .clock-widget-analog {
-  justify-content: flex-start;
-  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  padding: 0;
+}
+
+.tile-widget:has(.clock-widget-analog) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .clock-kicker {
@@ -1128,8 +1153,10 @@ input[type="range"] {
   font-variant-numeric: tabular-nums;
 }
 
-.analog-face {
-  flex: 1;
+.clock-widget-analog .analog-face {
+  flex: none;
+  width: min(100cqw, calc(100cqh - 16px));
+  aspect-ratio: 1;
   min-height: 0;
   display: grid;
   place-items: center;
@@ -1137,9 +1164,17 @@ input[type="range"] {
 }
 
 .analog-face svg {
-  width: auto;
+  width: 100%;
   height: 100%;
-  max-width: 100%;
+  display: block;
+}
+
+.clock-widget-analog .clock-date {
+  flex: none;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1;
+  text-align: center;
 }
 
 .search-widget {
@@ -1422,14 +1457,10 @@ input[type="range"] {
 .tile-widget:has(.nx-pill) { border-radius: 999px; }
 .tile-widget:has(.nx-circle) { border-radius: 50%; }
 
-.tile-widget:has(.nx) .grip {
-  opacity: 0;
-  background: color-mix(in srgb, var(--foreground) 42%, transparent);
+.tile-widget:has(.nx) .grip::before {
+  background: color-mix(in srgb, var(--foreground) 55%, transparent);
   box-shadow: none;
 }
-
-.tile-widget:has(.nx):hover .grip,
-.tile-widget:has(.nx):focus-within .grip { opacity: 1; }
 
 .nx {
   width: 100%;

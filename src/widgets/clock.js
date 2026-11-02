@@ -72,7 +72,9 @@ function svgLine(y1, y2, width) {
 }
 
 function mountAnalog(host) {
-  const root = card(host, 'Analog', { analog: true });
+  const root = document.createElement('div');
+  root.className = 'clock-widget clock-widget-analog';
+  host.append(root);
   const faceWrap = document.createElement('div');
   faceWrap.className = 'analog-face';
   const svg = document.createElementNS(NS, 'svg');
