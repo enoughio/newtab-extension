@@ -1110,7 +1110,7 @@ input[type="range"] {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
   padding: 12px 14px;
 }
 

@@ -126,7 +126,7 @@ registerWidget({
   kind: 'clock-date',
   name: 'Date',
   description: 'Month and day',
-  span: { w: 3, h: 3 },
+  span: { w: 3, h: 2 },
   mount: mountDate,
 });
 
