@@ -423,7 +423,7 @@ registerWidget({
   kind: 'weather-compact',
   name: 'High / low',
   description: 'Today’s high and low',
-  span: { w: 3, h: 4 },
+  span: { w: 2, h: 3 },
   mount: mountCompact,
 });
 
@@ -431,7 +431,7 @@ registerWidget({
   kind: 'weather',
   name: 'Forecast',
   description: 'Current conditions and a week',
-  span: { w: 12, h: 4 },
+  span: { w: 6, h: 3 },
   mount: mountForecast,
 });
 
@@ -439,7 +439,7 @@ registerWidget({
   kind: 'weather-now',
   name: 'Temperature',
   description: 'Current temperature',
-  span: { w: 3, h: 3 },
+  span: { w: 2, h: 2 },
   mount: mountNow,
 });
 
@@ -447,7 +447,7 @@ registerWidget({
   kind: 'weather-range',
   name: 'Range',
   description: 'Low and high',
-  span: { w: 3, h: 3 },
+  span: { w: 2, h: 2 },
   mount: mountRange,
 });
 
@@ -455,6 +455,6 @@ registerWidget({
   kind: 'sunny',
   name: 'Conditions',
   description: 'A short conditions pill',
-  span: { w: 4, h: 1 },
+  span: { w: 2, h: 1 },
   mount: mountSunny,
 });

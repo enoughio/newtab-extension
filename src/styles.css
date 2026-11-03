@@ -426,14 +426,29 @@ body.is-dragging .tile-widget:focus-within .resize-se {
 
 .shortcut-icon {
   flex: 0 0 auto;
-  width: min(calc(66.7cqw + 3px), calc(73.6cqh + 3px), calc(100cqw - 2px), calc(100cqh - 19px));
+  width: min(calc(66.7cqw + 3px), calc(73.6cqh + 3px), calc(100cqw - 2px), calc(100cqh - 32px));
   max-width: calc(100% - 2px);
-  max-height: calc(100% - 19px);
+  max-height: calc(100% - 32px);
   height: auto;
   aspect-ratio: 1;
   border-radius: 22%;
   object-fit: cover;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28);
+}
+
+.tile-shortcut .shortcut-face {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) calc(2 * 1.15em);
+  align-items: center;
+  justify-items: center;
+  gap: 2px;
+}
+
+.tile-shortcut .shortcut-icon {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 span.shortcut-icon,
@@ -450,35 +465,37 @@ span.mini {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  padding: 1px 3px;
-  border-radius: 6px;
-  background: var(--glass);
-  color: var(--foreground);
+  padding: 0 2px;
+  background: none;
+  color: #fff;
   font-size: 11px;
   font-weight: 650;
   line-height: 1.15;
   text-align: center;
   white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  backdrop-filter: var(--glass-filter);
-  -webkit-backdrop-filter: var(--glass-filter);
-  text-shadow: 0 1px 1px var(--label-shadow);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 
 .shortcut-face > .tile-label {
   position: static;
 }
 
+.tile-shortcut .shortcut-face > .tile-label {
+  align-self: start;
+  min-height: calc(2 * 1.15em);
+}
+
 .folder-blob {
   flex: 0 0 auto;
-  width: min(66.7cqw, 73.6cqh, calc(100cqh - 19px));
+  width: min(66.7cqw, 73.6cqh, calc(100cqh - 32px));
   max-width: calc(100% - 2px);
-  max-height: calc(100% - 19px);
+  max-height: calc(100% - 32px);
   aspect-ratio: 1;
   border-radius: 22%;
   display: grid;
