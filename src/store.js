@@ -182,7 +182,10 @@ function withPosition(item, source) {
 function normalizeItem(item) {
   if (!item || typeof item !== 'object') return null;
   if (item.type === 'widget' && typeof item.kind === 'string' && item.kind) {
-    return withPosition({ id: item.id || uid(), type: 'widget', kind: item.kind }, item);
+    const widget = { id: item.id || uid(), type: 'widget', kind: item.kind };
+    const title = cleanTitle(item.title, '');
+    if (title) widget.title = title;
+    return withPosition(widget, item);
   }
   if (item.type === 'shortcut') return normalizeShortcut(item);
   if (item.type === 'folder') {

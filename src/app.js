@@ -41,9 +41,10 @@ function clamp(value, min, max) {
 
 function chipLabel(item) {
   if (!item) return 'Item';
+  if (item.title) return item.title;
   if (item.type === 'widget') return getWidget(item.kind)?.name || 'Widget';
-  if (item.type === 'folder') return item.title || 'Folder';
-  return item.title || 'Shortcut';
+  if (item.type === 'folder') return 'Folder';
+  return 'Shortcut';
 }
 
 function monogramColor(text) {
@@ -83,15 +84,156 @@ function makeLabel(text) {
   return label;
 }
 
-function makeRemove(label, onClick) {
+const MENU_ICON_RENAME = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M13.2 5.8 18.2 10.8M4 20l1.1-4.4L15.6 5.1a2 2 0 0 1 2.8 2.8L7.9 18.4 4 20z"/></svg>';
+const MENU_ICON_REMOVE = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4.5 7.5h15M9.2 7.5V5.6A1.1 1.1 0 0 1 10.3 4.5h3.4a1.1 1.1 0 0 1 1.1 1.1v1.9M7.2 7.5l.7 11.1a1.4 1.4 0 0 0 1.4 1.3h5.4a1.4 1.4 0 0 0 1.4-1.3l.7-11.1"/></svg>';
+
+let itemMenu = null;
+
+function findItem(id) {
+  for (const item of layout?.items || []) {
+    if (item.id === id) return item;
+    if (item.type === 'folder') {
+      const child = item.children?.find((entry) => entry.id === id);
+      if (child) return child;
+    }
+  }
+  return null;
+}
+
+function closeItemMenu() {
+  if (!itemMenu) return;
+  const { node, button } = itemMenu;
+  itemMenu = null;
+  node.remove();
+  if (button?.isConnected) button.setAttribute('aria-expanded', 'false');
+}
+
+function placeItemMenu(menu, anchor) {
+  const anchorBox = anchor.getBoundingClientRect();
+  const pad = 8;
+  menu.style.top = `${anchorBox.bottom + 4}px`;
+  const box = menu.getBoundingClientRect();
+  let left = anchorBox.right - box.width;
+  let top = anchorBox.bottom + 4;
+  if (left + box.width > window.innerWidth - pad) left = window.innerWidth - pad - box.width;
+  if (left < pad) left = pad;
+  if (top + box.height > window.innerHeight - pad) top = Math.max(pad, anchorBox.top - 4 - box.height);
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+}
+
+function showRenameField(menu, renameButton, item) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.maxLength = 40;
+  input.value = item.title || chipLabel(item);
+  input.placeholder = 'Name';
+  input.setAttribute('aria-label', `Rename ${chipLabel(item)}`);
+  input.autocomplete = 'off';
+  input.spellcheck = false;
+  input.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    event.stopPropagation();
+    commitRename(item.id, input.value);
+  });
+  input.addEventListener('pointerdown', (event) => event.stopPropagation());
+  input.addEventListener('click', (event) => event.stopPropagation());
+  renameButton.replaceWith(input);
+  placeItemMenu(menu, itemMenu.button);
+  input.focus();
+  input.select();
+}
+
+async function commitRename(id, raw) {
+  closeItemMenu();
+  const title = String(raw || '').trim().slice(0, 40);
+  if (!title) return;
+  const item = findItem(id);
+  if (!item || item.title === title) return;
+  item.title = title;
+  try {
+    await saveLayout(layout);
+  } catch (error) {
+    console.error(error);
+  }
+  renderHome();
+}
+
+function openItemMenu(id, button) {
+  const item = findItem(id);
+  if (!item) return;
+  const menu = document.createElement('div');
+  menu.className = 'tile-menu';
+  menu.setAttribute('role', 'menu');
+
+  const rename = document.createElement('button');
+  rename.type = 'button';
+  rename.className = 'tile-menu-rename';
+  rename.setAttribute('role', 'menuitem');
+  rename.innerHTML = `${MENU_ICON_RENAME}<span>Rename</span>`;
+
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'tile-menu-remove';
+  remove.setAttribute('role', 'menuitem');
+  remove.innerHTML = `${MENU_ICON_REMOVE}<span>Remove</span>`;
+
+  const keepOpen = (event) => event.stopPropagation();
+  rename.addEventListener('pointerdown', keepOpen);
+  remove.addEventListener('pointerdown', keepOpen);
+  rename.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!itemMenu) return;
+    showRenameField(menu, rename, item);
+  });
+  remove.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeItemMenu();
+    removeById(id);
+  });
+
+  menu.append(rename, remove);
+  document.body.append(menu);
+  button.setAttribute('aria-expanded', 'true');
+  itemMenu = { node: menu, button, id };
+  placeItemMenu(menu, button);
+}
+
+function toggleItemMenu(id, button) {
+  if (itemMenu?.button === button) {
+    closeItemMenu();
+    return;
+  }
+  closeItemMenu();
+  openItemMenu(id, button);
+}
+
+function makeMore(item) {
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'tile-remove';
-  button.setAttribute('aria-label', `Remove ${label}`);
-  button.textContent = '×';
-  button.addEventListener('click', (event) => {
+  button.className = 'tile-more';
+  button.setAttribute('aria-label', `${chipLabel(item)} options`);
+  button.setAttribute('aria-haspopup', 'menu');
+  button.setAttribute('aria-expanded', 'false');
+  button.innerHTML = '<span></span><span></span><span></span>';
+  const stop = (event) => {
+    event.preventDefault();
     event.stopPropagation();
-    onClick();
+  };
+  button.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return;
+    event.stopPropagation();
+  });
+  button.addEventListener('click', (event) => {
+    stop(event);
+    toggleItemMenu(item.id, button);
+  });
+  button.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.stopPropagation();
   });
   return button;
 }
@@ -181,7 +323,7 @@ function createTile(item) {
     grip.setAttribute('aria-hidden', 'true');
     const host = document.createElement('div');
     host.className = 'widget-host';
-    el.append(grip, host, makeRemove(chipLabel(item), () => removeById(item.id)), ...resizeHandles(item.id));
+    el.append(grip, host, makeMore(item), ...resizeHandles(item.id));
     const widget = getWidget(item.kind);
     if (!widget) {
       host.textContent = 'This widget is not installed.';
@@ -197,7 +339,7 @@ function createTile(item) {
   } else {
     const face = document.createElement('div');
     face.className = 'shortcut-face';
-    el.append(face, makeRemove(chipLabel(item), () => removeById(item.id)));
+    el.append(face, makeMore(item));
     el.tabIndex = 0;
     if (item.type === 'shortcut') el.setAttribute('role', 'link');
     else {
@@ -207,13 +349,14 @@ function createTile(item) {
     ensureFace(el, item);
     el.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (event.target.closest('input, textarea, select, a, .tile-more, .tile-menu')) return;
       event.preventDefault();
       activateTile(item.id);
     });
   }
   el.addEventListener('pointerdown', (event) => {
     if (event.button !== 0) return;
-    if (event.target.closest('input, textarea, select, a, .tile-remove, .resize-handle')) return;
+    if (event.target.closest('input, textarea, select, a, .tile-more, .tile-menu, .resize-handle')) return;
     if (el.dataset.type === 'widget' && event.target.closest('button')) return;
     trackPointer(event, { type: 'grid', id: item.id });
   });
@@ -276,6 +419,8 @@ function syncGrid(placed, { hideId = null, ghost = null, nestId = null } = {}) {
     }
     seen.add(spot.item.id);
     placeTile(el, spot);
+    const more = el.querySelector(':scope > .tile-more');
+    if (more) more.setAttribute('aria-label', `${chipLabel(spot.item)} options`);
     el.classList.toggle('is-lifted', spot.item.id === hideId);
     el.classList.toggle('is-nest', spot.item.id === nestId);
     if (spot.item.type !== 'widget') ensureFace(el, spot.item);
@@ -350,6 +495,7 @@ function placedItems(items = layout.items) {
 
 function renderHome(options = {}) {
   if (resize) return;
+  closeItemMenu();
   const hideId = options.hideId || null;
   syncGrid(placedItems().filter((spot) => spot.item.id !== hideId), {
     hideId,
@@ -958,10 +1104,10 @@ function renderFolderBody() {
     open.addEventListener('click', () => {
       if (!suppressClick) openUrl(child.url);
     });
-    wrap.append(open, makeRemove(child.title, () => removeById(child.id)));
+    wrap.append(open, makeMore(child));
     wrap.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
-      if (event.target.closest('.tile-remove')) return;
+      if (event.target.closest('.tile-more, .tile-menu')) return;
       trackPointer(event, { type: 'folder', folderId: folder.id, id: child.id });
     });
     grid.append(wrap);
@@ -1068,8 +1214,27 @@ function wire() {
   els.folderLayer.addEventListener('click', (event) => {
     if (event.target === els.folderLayer) closeFolder();
   });
+  document.addEventListener('pointerdown', (event) => {
+    if (!itemMenu) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (itemMenu.node.contains(target) || itemMenu.button.contains(target)) return;
+    const openingAnother = Boolean(target.closest('.tile-more'));
+    closeItemMenu();
+    if (openingAnother) return;
+    event.preventDefault();
+    event.stopPropagation();
+  }, true);
+  document.addEventListener('scroll', () => {
+    if (itemMenu) closeItemMenu();
+  }, true);
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
+    if (itemMenu) {
+      event.preventDefault();
+      closeItemMenu();
+      return;
+    }
     if (!els.folderLayer.hidden) {
       closeFolder();
       return;
